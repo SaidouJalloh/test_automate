@@ -1,0 +1,28 @@
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+    - name: Run tests
+      run: python -m pytest
+    - name: Submit test results
+      run: 'curl -X POST "http://your-test-automation-server/api/ci-cd/results" -H
+        "Content-Type: application/json" -d ''{"project_id": "67c1b56e9b988e43cfec93ca",
+        "run_id": "${{ github.run_id }}", "status": "${{ job.status }}", "results":
+        {}, "commit_id": "${{ github.sha }}", "branch": "main"}'''
+name: Test Automation
+'on':
+  pull_request:
+    branches:
+    - main
+  push:
+    branches:
+    - main
+  workflow_dispatch: {}
